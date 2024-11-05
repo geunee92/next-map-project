@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Dispatch, SetStateAction } from "react";
 import Image from "next/image";
 import {
   AiOutlineClose,
@@ -7,28 +7,25 @@ import {
   AiOutlinePhone,
 } from "react-icons/ai";
 import { HiOutlineMapPin } from "react-icons/hi2";
-import { useRouter } from "next/router";
+import { StoreType } from "@/interface";
 
-function StoreBox({
-  store,
-  setStore,
-}: {
-  store: any;
-  setStore: (value: any) => void;
-}) {
-  const router = useRouter();
+interface StoreBoxProps {
+  storeDataList: StoreType;
+  setStore: Dispatch<SetStateAction<any>>;
+}
 
+function StoreBox({ storeDataList, setStore }: StoreBoxProps) {
   return (
     <div className="fixed transition ease-in-out delay-150 inset-x-0 mx-auto bottom-20 rounded-lg shadow-lg max-w-sm md:max-w-xl z-10 w-full bg-white">
-      {store && (
+      {storeDataList && (
         <>
           <div className="p-8">
             <div className="flex justify-between items-start">
               <div className="flex gap-4 items-center">
                 <Image
                   src={
-                    store?.bizcnd_code_nm
-                      ? `/images/markers/${store?.bizcnd_code_nm}.png`
+                    storeDataList?.category
+                      ? `/images/markers/${storeDataList?.category}.png`
                       : "/images/markers/default.png"
                   }
                   width={40}
@@ -36,40 +33,34 @@ function StoreBox({
                   alt="아이콘 이미지"
                 />
                 <div>
-                  <div className="font-semibold">{store?.name}</div>
-                  <div className="text-sm">{store?.storeType}</div>
+                  <div className="font-semibold">{storeDataList?.name}</div>
+                  <div className="text-sm">{storeDataList?.storeType}</div>
                 </div>
               </div>
-
               <button type="button" onClick={() => setStore(null)}>
                 <AiOutlineClose />
               </button>
             </div>
-
             <div className="mt-4 flex gap-2 items-center">
               <HiOutlineMapPin />
-              {store?.rdn_code_nm}
+              {storeDataList?.address}
             </div>
-
             <div className="mt-2 flex gap-2 items-center">
               <AiOutlinePhone />
-              {store?.tel_no}
+              {storeDataList?.phone}
             </div>
-
             <div className="mt-2 flex gap-2 items-center">
               <AiOutlineInfoCircle />
-              {store?.crtfc_gbn_nm}
+              {storeDataList?.storeType}
             </div>
-
             <div className="mt-2 flex gap-2 items-center">
               <AiOutlineCheck />
-              {store?.bizcnd_code_nm}
+              {storeDataList?.category}
             </div>
           </div>
-
           <button
             type="button"
-            onClick={() => router.push(`/stores/${store.id}`)}
+            onClick={() => window.alert("상세보기 작업중")}
             className="w-full bg-blue-700 hover:bg-blue-500 focus:bg-blue-500 py-3 text-white font-semibold rounded-b-lg"
           >
             상세보기
@@ -78,6 +69,16 @@ function StoreBox({
       )}
     </div>
   );
+}
+
+export async function getServerSideProps() {
+  const storeDataList = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/api/stores`
+  ).then((res) => res.json());
+
+  return {
+    props: { storeDataList },
+  };
 }
 
 export default StoreBox;

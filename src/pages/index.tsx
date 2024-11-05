@@ -1,14 +1,16 @@
 import { useState } from "react";
 import Map from "../components/Map";
 import Markers from "../components/Markers";
-import storeData from "@/data/store_data.json";
 import StoreBox from "@/components/StoreBox";
+import { StoreType } from "@/interface";
 
-export default function Home() {
+export default function Home({
+  storeDataList,
+}: {
+  storeDataList: StoreType[];
+}) {
   const [map, setMap] = useState(null);
   const [currentStore, setCurrentStore] = useState(null);
-
-  const storeDataList = storeData["DATA"];
 
   return (
     <>
@@ -18,7 +20,18 @@ export default function Home() {
         map={map}
         setCurrentStore={setCurrentStore}
       />
-      <StoreBox store={currentStore} setStore={setCurrentStore} />
+      <StoreBox storeDataList={currentStore} setStore={setCurrentStore} />
     </>
   );
+}
+
+export async function getStaticProps() {
+  const storeDataList = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/api/stores`
+  ).then((res) => res.json());
+
+  return {
+    props: { storeDataList },
+    revalidate: 60 * 60,
+  };
 }
