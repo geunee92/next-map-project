@@ -1,5 +1,5 @@
 export interface StoreType {
-    id: string;
+    id: number;
     phone?: string | null;
     address?: string | null;
     lat?: string | null;
