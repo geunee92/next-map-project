@@ -3,6 +3,7 @@ import Map from "../components/Map";
 import Markers from "../components/Markers";
 import StoreBox from "@/components/StoreBox";
 import { StoreType } from "@/interface";
+import axios from "axios";
 
 export default function Home({
   storeDataList,
@@ -26,12 +27,12 @@ export default function Home({
 }
 
 export async function getStaticProps() {
-  const storeDataList = await fetch(
+  const storeDataList = await axios(
     `${process.env.NEXT_PUBLIC_API_URL}/api/stores`
-  ).then((res) => res.json());
+  );
 
   return {
-    props: { storeDataList },
+    props: { storeDataList: storeDataList.data },
     revalidate: 60 * 60,
   };
 }

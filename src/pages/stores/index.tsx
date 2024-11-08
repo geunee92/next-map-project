@@ -1,14 +1,15 @@
 import { StoreType } from "@/interface";
+import axios from "axios";
 import Image from "next/image";
 import React from "react";
 
 export async function getServerSideProps() {
-  const storeDataList = await fetch(
+  const storeDataList = await axios(
     `${process.env.NEXT_PUBLIC_API_URL}/api/stores`
-  ).then((res) => res.json());
+  );
 
   return {
-    props: { storeDataList },
+    props: { storeDataList: storeDataList.data },
   };
 }
 
