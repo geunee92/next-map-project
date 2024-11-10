@@ -34,7 +34,6 @@ function StoreListPage() {
     isError,
     isLoading,
   } = useInfiniteQuery("stores", fetchStores, {
-    // 다음에 생성할 매개변수
     getNextPageParam: (lastPage: any) =>
       lastPage.data?.length > 0 ? lastPage.page + 1 : undefined,
   });

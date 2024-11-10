@@ -3,17 +3,22 @@ import "@/styles/globals.css";
 import type { AppProps } from "next/app";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
+import { SessionProvider } from "next-auth/react";
+
+const queryClient = new QueryClient();
 
 export default function App({ Component, pageProps }: AppProps) {
-  const queryClient = new QueryClient();
-
+  const { session } = pageProps;
   return (
     <QueryClientProvider client={queryClient}>
-      <Layout>
-        <Component {...pageProps} />
-      </Layout>
+      {/* useSession을 사용할 수 있다. */}
+      <SessionProvider session={session}>
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
 
-      <ReactQueryDevtools />
+        <ReactQueryDevtools />
+      </SessionProvider>
     </QueryClientProvider>
   );
 }
