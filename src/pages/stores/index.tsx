@@ -2,24 +2,27 @@ import Loading from "@/components/Loading";
 import { StoreType } from "@/interface";
 import axios from "axios";
 import Image from "next/image";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import { useInfiniteQuery } from "react-query";
 import useIntersectionObserver from "@/hooks/useIntersectionObserver";
 import Loader from "@/components/Loader";
 import SearchFilter from "@/components/SearchFilter";
+import { useRouter } from "next/router";
+import { useAtomValue } from "jotai";
+import { searchState } from "@/atom";
 
 function StoreListPage() {
+  const router = useRouter();
   const ref = useRef<HTMLDivElement | null>(null);
   const pageRef = useIntersectionObserver(ref, {});
   // page가 끝에 왔는지
   const isPageEnd = !!pageRef?.isIntersecting;
 
-  const [searchValue, setSearchValue] = useState<string | null>(null);
-  const [district, setDistrict] = useState<string | null>(null);
+  const search = useAtomValue(searchState);
 
   const searchParams = {
-    searchValue: searchValue,
-    district: district,
+    searchValue: search?.searchValue,
+    district: search?.district,
   };
 
   const fetchStores = async ({ pageParam = 1 }) => {
@@ -79,7 +82,7 @@ function StoreListPage() {
 
   return (
     <div className="px-4 md:max-w-4xl mx-auto py-8">
-      <SearchFilter setSearchValue={setSearchValue} setDistrict={setDistrict} />
+      <SearchFilter />
 
       <ul role="list" className="divide-y divide-gray-100">
         {isLoading ? (
@@ -88,7 +91,11 @@ function StoreListPage() {
           storeDataList?.pages?.map((page, index) => (
             <React.Fragment key={index}>
               {page.data.map((store: StoreType, i: number) => (
-                <li className="flex justify-between gap-x-6 py-5" key={i}>
+                <li
+                  className="flex justify-between gap-x-6 py-5 cursor-pointer hover:bg-gray-50"
+                  key={i}
+                  onClick={() => router.push(`/stores/${store.id}`)}
+                >
                   <div className="flex gap-x-4">
                     <Image
                       src={

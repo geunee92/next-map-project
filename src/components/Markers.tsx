@@ -1,7 +1,7 @@
-import { currentStoreState, mapState } from "@/atom";
+import { currentStoreState, locationState, mapState } from "@/atom";
 import { StoreType } from "@/interface";
 import { useEffect, useCallback } from "react";
-import { useAtomValue, useSetAtom } from "jotai";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
 
 interface MarkerProps {
   storeDataList: StoreType[];
@@ -10,6 +10,7 @@ interface MarkerProps {
 export default function Markers({ storeDataList }: MarkerProps) {
   const map = useAtomValue(mapState);
   const setCurrentStore = useSetAtom(currentStoreState);
+  const [location, setLocation] = useAtom(locationState);
 
   const loadKakoMarkers = useCallback(() => {
     if (map) {
@@ -69,10 +70,16 @@ export default function Markers({ storeDataList }: MarkerProps) {
         // 선택한 가게 저장
         window.kakao.maps.event.addListener(marker, "click", function () {
           setCurrentStore(store);
+          setLocation({
+            ...location,
+            lat: store.lat,
+            lng: store.lng,
+          });
         });
       });
     }
-  }, [map, setCurrentStore, storeDataList]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [map, storeDataList]);
 
   useEffect(() => {
     loadKakoMarkers();
