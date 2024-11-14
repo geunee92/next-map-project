@@ -1,17 +1,16 @@
+import { currentStoreState, mapState } from "@/atom";
 import { StoreType } from "@/interface";
-import { useEffect, useCallback, Dispatch, SetStateAction } from "react";
+import { useEffect, useCallback } from "react";
+import { useAtomValue, useSetAtom } from "jotai";
 
 interface MarkerProps {
-  map: any;
   storeDataList: StoreType[];
-  setCurrentStore: Dispatch<SetStateAction<any>>;
 }
 
-export default function Markers({
-  map,
-  storeDataList,
-  setCurrentStore,
-}: MarkerProps) {
+export default function Markers({ storeDataList }: MarkerProps) {
+  const map = useAtomValue(mapState);
+  const setCurrentStore = useSetAtom(currentStoreState);
+
   const loadKakoMarkers = useCallback(() => {
     if (map) {
       // 식당 데이터 마커 띄우기

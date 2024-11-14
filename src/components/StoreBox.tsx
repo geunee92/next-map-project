@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction } from "react";
+import React from "react";
 import Image from "next/image";
 import {
   AiOutlineClose,
@@ -7,16 +7,14 @@ import {
   AiOutlinePhone,
 } from "react-icons/ai";
 import { HiOutlineMapPin } from "react-icons/hi2";
-import { StoreType } from "@/interface";
 import { useRouter } from "next/router";
+import { useAtom } from "jotai";
+import { currentStoreState } from "@/atom";
 
-interface StoreBoxProps {
-  storeDataList: StoreType | null;
-  setStore: Dispatch<SetStateAction<any>>;
-}
-
-function StoreBox({ storeDataList, setStore }: StoreBoxProps) {
+function StoreBox() {
   const router = useRouter();
+
+  const [storeDataList, setStore] = useAtom(currentStoreState);
 
   return (
     <div className="fixed transition ease-in-out delay-150 inset-x-0 mx-auto bottom-20 rounded-lg shadow-lg max-w-sm md:max-w-xl z-10 w-full bg-white">

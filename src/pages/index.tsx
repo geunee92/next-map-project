@@ -1,4 +1,3 @@
-import { useState } from "react";
 import Map from "../components/Map";
 import Markers from "../components/Markers";
 import StoreBox from "@/components/StoreBox";
@@ -10,18 +9,13 @@ export default function Home({
 }: {
   storeDataList: StoreType[];
 }) {
-  const [map, setMap] = useState(null);
-  const [currentStore, setCurrentStore] = useState(null);
-
   return (
     <>
-      <Map setMap={setMap} />;
-      <Markers
-        storeDataList={storeDataList}
-        map={map}
-        setCurrentStore={setCurrentStore}
-      />
-      <StoreBox storeDataList={currentStore} setStore={setCurrentStore} />
+      <Map />
+
+      <Markers storeDataList={storeDataList} />
+
+      <StoreBox />
     </>
   );
 }
