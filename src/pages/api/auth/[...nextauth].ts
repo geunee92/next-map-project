@@ -6,7 +6,15 @@ import NaverProvider from "next-auth/providers/naver";
 import KakaoProvider from "next-auth/providers/kakao";
 
 const prisma = new PrismaClient();
+
 export const authOptions = {
+  session: {
+    // jwt 기반의 세션 추가
+    strategy: "jwt" as const,
+    maxAge: 60 * 60 * 24,
+    updateAge: 60 * 60 * 2,
+  },
+
 // 로그인 정보를 프리즈마에 업데이트 하기 위한 셋팅
   adapter: PrismaAdapter(prisma),
   // Configure one or more authentication providers
