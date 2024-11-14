@@ -1,11 +1,16 @@
+import { useState } from "react";
 import Loader from "@/components/Loader";
 import { StoreType } from "@/interface";
 import axios from "axios";
 import { useRouter } from "next/router";
 import React from "react";
 import { useQuery } from "react-query";
+import Map from "@/components/Map";
+import Marker from "@/components/Marker";
 
 function StoreDetailPage() {
+  const [map, setMap] = useState(null);
+
   const router = useRouter();
 
   const { id } = router.query;
@@ -19,8 +24,10 @@ function StoreDetailPage() {
     data: store,
     isFetching,
     isError,
+    isSuccess,
   } = useQuery(`store-${id}`, fetchStore, {
     enabled: !!id,
+    // 창 변경할 때 재갱신 금지
     refetchOnWindowFocus: false,
   });
 
@@ -108,6 +115,14 @@ function StoreDetailPage() {
           </dl>
         </div>
       </div>
+
+      {isSuccess && (
+        <div className="overflow-hidden w-full mb-20 max-w-5xl mx-auto max-h-[600px]">
+          <Map setMap={setMap} lat={store?.lat} lng={store?.lng} zoom={1} />
+
+          <Marker map={map} store={store} />
+        </div>
+      )}
     </>
   );
 }

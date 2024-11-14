@@ -1,5 +1,6 @@
 /*global kakao*/
 import Script from "next/script";
+import { Dispatch, SetStateAction } from "react";
 
 // 카카오 맵에서 타입을 따로 설정하지 않기 때문에 any를 사용
 declare global {
@@ -8,17 +9,29 @@ declare global {
     kakao: any;
   }
 }
+interface MapProps {
+  setMap: Dispatch<SetStateAction<any>>;
+  lat?: string | null;
+  lng?: string | null;
+  zoom?: number;
+}
 
 const DEFAULT_LAT = 37.497625203;
 const DEFAULT_LNG = 127.03088379;
 
-function Map({ setMap }: { setMap: (value: any) => void }) {
+const DEFAULT_ZOOM = 3;
+
+function Map({ setMap, lat, lng, zoom }: MapProps) {
   const loadKakaoMap = () => {
     window.kakao.maps.load(() => {
       const mapContainer = document.getElementById("map");
       const mapOption = {
-        center: new window.kakao.maps.LatLng(DEFAULT_LAT, DEFAULT_LNG),
-        level: 3,
+        // 경도와 위도가 있다면 위치를 설정 없다면 기본 값을 설정
+        center: new window.kakao.maps.LatLng(
+          lat ?? DEFAULT_LAT,
+          lng ?? DEFAULT_LNG
+        ),
+        level: zoom ?? DEFAULT_ZOOM,
       };
       const map = new window.kakao.maps.Map(mapContainer, mapOption);
 
