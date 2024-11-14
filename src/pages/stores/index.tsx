@@ -2,10 +2,11 @@ import Loading from "@/components/Loading";
 import { StoreType } from "@/interface";
 import axios from "axios";
 import Image from "next/image";
-import React, { useCallback, useEffect, useRef } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useInfiniteQuery } from "react-query";
 import useIntersectionObserver from "@/hooks/useIntersectionObserver";
 import Loader from "@/components/Loader";
+import SearchFilter from "@/components/SearchFilter";
 
 function StoreListPage() {
   const ref = useRef<HTMLDivElement | null>(null);
@@ -13,11 +14,20 @@ function StoreListPage() {
   // page가 끝에 왔는지
   const isPageEnd = !!pageRef?.isIntersecting;
 
+  const [searchValue, setSearchValue] = useState<string | null>(null);
+  const [district, setDistrict] = useState<string | null>(null);
+
+  const searchParams = {
+    searchValue: searchValue,
+    district: district,
+  };
+
   const fetchStores = async ({ pageParam = 1 }) => {
     const { data } = await axios("/api/stores?page=" + pageParam, {
       params: {
         limit: 10,
         page: pageParam,
+        ...searchParams,
       },
     });
 
@@ -33,7 +43,7 @@ function StoreListPage() {
     hasNextPage,
     isError,
     isLoading,
-  } = useInfiniteQuery("stores", fetchStores, {
+  } = useInfiniteQuery(["stores", searchParams], fetchStores, {
     getNextPageParam: (lastPage: any) =>
       lastPage.data?.length > 0 ? lastPage.page + 1 : undefined,
   });
@@ -69,6 +79,8 @@ function StoreListPage() {
 
   return (
     <div className="px-4 md:max-w-4xl mx-auto py-8">
+      <SearchFilter setSearchValue={setSearchValue} setDistrict={setDistrict} />
+
       <ul role="list" className="divide-y divide-gray-100">
         {isLoading ? (
           <Loading />
